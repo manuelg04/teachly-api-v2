@@ -7,6 +7,7 @@ import { join } from 'path';
 import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
 import { SetupProfileModule } from './setup-profile/setup-profile.module';
+import { initializeDataSource } from './database/config/dataSource';
 
 @Module({
   imports: [
@@ -14,17 +15,11 @@ import { SetupProfileModule } from './setup-profile/setup-profile.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: parseInt(process.env.POSTGRES_PORT, 10),
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
-      entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-      migrations: [join(__dirname, 'database', 'migrations', '*.{ts,js}')],
-      synchronize: false,
-      migrationsRun: true, // Ejecutar migraciones automáticamente al arrancar
+    TypeOrmModule.forRootAsync({
+      useFactory: async () => {
+        const dataSource = await initializeDataSource();
+        return dataSource.options;
+      },
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
