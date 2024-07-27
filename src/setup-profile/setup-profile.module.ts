@@ -8,5 +8,6 @@ import { User } from 'src/database/entities/user.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([User]), S3Module],
   providers: [SetupProfileService, SetupProfileResolver],
+  exports: [SetupProfileService],
 })
 export class SetupProfileModule {}

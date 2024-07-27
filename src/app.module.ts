@@ -6,7 +6,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
-import { SetupProfileResolver } from './setup-profile/setup-profile.resolver';
+import { SetupProfileModule } from './setup-profile/setup-profile.module';
 
 @Module({
   imports: [
@@ -32,7 +32,8 @@ import { SetupProfileResolver } from './setup-profile/setup-profile.resolver';
       playground: true,
       path: '/graphql',
     }),
+    SetupProfileModule,
   ],
-  providers: [AppResolver, AppService, SetupProfileResolver],
+  providers: [AppResolver, AppService],
 })
 export class AppModule {}

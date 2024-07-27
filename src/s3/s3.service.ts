@@ -9,12 +9,11 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Bucket, bucketPaths } from './buckets';
 import { getSignedUrl as getCloudFrontSignedUrl } from '@aws-sdk/cloudfront-signer';
-import { readFileSync } from 'fs';
 
 @Injectable()
 export class S3Service {
   private s3Client: S3Client;
-  private cloudfrontPrivateKey: Buffer;
+  private cloudfrontPrivateKey: string;
 
   constructor(private configService: ConfigService) {
     this.s3Client = new S3Client({
@@ -24,7 +23,7 @@ export class S3Service {
         secretAccessKey: configService.get('AWS_SECRET_ACCESS_KEY'),
       },
     });
-    this.cloudfrontPrivateKey = readFileSync('cloudfront_private_key.pem');
+    this.cloudfrontPrivateKey = configService.get('CDN_PRIVATE_KEY');
   }
 
   async getPresignedUploadUrl(
